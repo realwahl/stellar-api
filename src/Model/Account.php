@@ -102,10 +102,14 @@ class Account extends RestApiModel
      */
     public static function isValidAccount($accountId)
     {
+        if (!is_string($accountId) || $accountId === '') {
+            return false;
+        }
+
         // Validate that keypair passes checksum
         try {
             $keypair = Keypair::newFromPublicKey($accountId);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
 

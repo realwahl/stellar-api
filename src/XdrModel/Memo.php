@@ -56,16 +56,22 @@ class Memo
         if ($this->type == static::MEMO_TYPE_NONE) return;
         if ($this->type == static::MEMO_TYPE_TEXT) {
             // Verify length does not exceed max
-            if (strlen($this->value) > static::VALUE_TEXT_MAX_SIZE) {
+            $value = ($this->value === null) ? '' : (string)$this->value;
+            if (strlen($value) > static::VALUE_TEXT_MAX_SIZE) {
                 throw new \ErrorException(sprintf('memo text is greater than the maximum of %s bytes', static::VALUE_TEXT_MAX_SIZE));
             }
+            // Normalize stored value to a string to avoid null-related deprecations
+            $this->value = $value;
         }
         if ($this->type == static::MEMO_TYPE_ID) {
             if ($this->value < 0) throw new \ErrorException('value cannot be negative');
             if ($this->value > PHP_INT_MAX) throw new \ErrorException(sprintf('value cannot be larger than %s', PHP_INT_MAX));
         }
         if ($this->type == static::MEMO_TYPE_HASH || $this->type == static::MEMO_TYPE_RETURN) {
-            if (strlen($this->value) != 32) throw new \InvalidArgumentException(sprintf('hash values must be 32 bytes, got %s bytes', strlen($this->value)));
+            if (!is_string($this->value) || strlen($this->value) != 32) {
+                $len = is_string($this->value) ? strlen($this->value) : 'non-string';
+                throw new \InvalidArgumentException(sprintf('hash values must be 32 bytes, got %s', $len));
+            }
         }
     }
 

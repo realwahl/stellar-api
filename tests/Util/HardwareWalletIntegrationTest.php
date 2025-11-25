@@ -56,7 +56,7 @@ abstract class HardwareWalletIntegrationTest extends IntegrationTest
         $this->privateKeySigner = new PrivateKeySigner(Keypair::newFromMnemonic($this->mnemonic));
     }
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

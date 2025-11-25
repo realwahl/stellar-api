@@ -7,7 +7,7 @@ namespace ZuluCrypto\StellarSdk\Xdr\Type;
 use ZuluCrypto\StellarSdk\Xdr\Iface\XdrEncodableInterface;
 use ZuluCrypto\StellarSdk\Xdr\XdrEncoder;
 
-class VariableArray implements XdrEncodableInterface
+class VariableArray implements XdrEncodableInterface, \Countable
 {
     /**
      * @var XdrEncodableInterface[]
@@ -44,7 +44,7 @@ class VariableArray implements XdrEncodableInterface
     /**
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         return count($this->elements);
     }

@@ -46,11 +46,9 @@ class StellarAmountTest extends TestCase
         $this->assertEquals(0.0000001, (new StellarAmount(0.0000001))->getScaledValue());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testGetScaledValueTooBig()
     {
+        $this->expectException(\InvalidArgumentException::class);
         // Maximum number of XLM that can be held is 922337203685.4775807
         $amount = new StellarAmount(922337203686);
 
@@ -58,11 +56,10 @@ class StellarAmountTest extends TestCase
         $amount->getScaledValue();
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testExceptionWhenNegative()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $amount = new StellarAmount(-1);
     }
 }
+

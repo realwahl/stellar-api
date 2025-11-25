@@ -23,6 +23,13 @@ class XdrBuffer
      */
     protected $position;
 
+    /**
+     * Total size of the XDR byte buffer
+     *
+     * @var int
+     */
+    protected $size;
+
     public function __construct($xdrBytes)
     {
         $this->xdrBytes = $xdrBytes;

@@ -47,11 +47,11 @@ abstract class IntegrationTest extends TestCase
      */
     protected $horizonServer;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->horizonBaseUrl = getenv('STELLAR_HORIZON_BASE_URL');
         if (!$this->horizonBaseUrl) {
-            throw new \InvalidArgumentException('Environment variable STELLAR_HORIZON_BASE_URL must be defined');
+            $this->markTestSkipped('STELLAR_HORIZON_BASE_URL is not set; skipping integration tests.');
         }
 
         // Public : Public Global Stellar Network ; September 2015
