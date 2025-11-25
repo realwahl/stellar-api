@@ -3,7 +3,7 @@
 
 namespace ZuluCrypto\StellarSdk\Transaction;
 
-use phpseclib\Math\BigInteger;
+use phpseclib3\Math\BigInteger;
 use ZuluCrypto\StellarSdk\Horizon\Api\PostTransactionResponse;
 use ZuluCrypto\StellarSdk\Horizon\ApiClient;
 use ZuluCrypto\StellarSdk\Horizon\Exception\HorizonException;
@@ -579,7 +579,7 @@ class TransactionBuilder implements XdrEncodableInterface
      */
     public function setSequenceNumber($sequenceNumber)
     {
-        if (!is_a($sequenceNumber, 'phpseclib\Math\BigInteger')) {
+        if (!is_a($sequenceNumber, 'phpseclib3\Math\BigInteger')) {
             $sequenceNumber = new BigInteger($sequenceNumber);
         }
 

@@ -4,7 +4,7 @@
 namespace ZuluCrypto\StellarSdk\Model;
 
 
-use phpseclib\Math\BigInteger;
+use phpseclib3\Math\BigInteger;
 use ZuluCrypto\StellarSdk\Horizon\Api\HorizonResponse;
 use ZuluCrypto\StellarSdk\Keypair;
 use ZuluCrypto\StellarSdk\Transaction\TransactionBuilder;

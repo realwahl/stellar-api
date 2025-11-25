@@ -2,7 +2,7 @@
 
 require '../vendor/autoload.php';
 
-use \phpseclib\Math\BigInteger;
+use \phpseclib3\Math\BigInteger;
 
 use \ZuluCrypto\StellarSdk\Keypair;
 use \ZuluCrypto\StellarSdk\Server;

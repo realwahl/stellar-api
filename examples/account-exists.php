@@ -9,7 +9,7 @@ require '../vendor/autoload.php';
 
 use \ZuluCrypto\StellarSdk\Keypair;
 use \ZuluCrypto\StellarSdk\Server;
-use \phpseclib\Math\BigInteger;
+use \phpseclib3\Math\BigInteger;
 
 
 $server = Server::testNet();
