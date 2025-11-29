@@ -98,7 +98,7 @@ class Transaction extends RestApiModel
     protected $feeMetaXdr;
 
     /**
-     * @var \DateTime
+     * @var ?\DateTime
      */
     protected $createdAt;
 
@@ -134,7 +134,14 @@ class Transaction extends RestApiModel
 
         // todo: should be a Memo object?
         if (isset($rawData['ledger'])) $this->ledger = $rawData['ledger'];
-        if (isset($rawData['created_at'])) $this->createdAt = \DateTime::createFromFormat(DATE_ISO8601, $rawData['created_at']);
+        if (isset($rawData['created_at'])) {
+            try {
+                $this->createdAt = new \DateTime($rawData['created_at']);
+            }
+            catch (\Exception $e) {
+                $this->createdAt = null;
+            }
+        }
         if (isset($rawData['source_account'])) $this->sourceAccountId = $rawData['source_account'];
         if (isset($rawData['source_account_sequence'])) $this->sourceAccountSequence = $rawData['source_account_sequence'];
         if (isset($rawData['fee_paid'])) $this->feePaid = $rawData['fee_paid'];
@@ -421,7 +428,7 @@ class Transaction extends RestApiModel
     }
 
     /**
-     * @return \DateTime
+     * @return ?\DateTime
      */
     public function getCreatedAt()
     {
@@ -429,7 +436,7 @@ class Transaction extends RestApiModel
     }
 
     /**
-     * @param \DateTime $createdAt
+     * @param \DateTime|null $createdAt
      */
     public function setCreatedAt($createdAt)
     {

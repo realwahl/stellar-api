@@ -145,6 +145,16 @@ Guidance:
 - Do arithmetic and comparisons using stroops whenever possible.
 - Format for display using the 7-decimal methods above.
 
+## Timestamps and Nullability
+
+Horizon returns RFC3339 timestamps (often with a trailing `Z`). This library parses these using PHP's `DateTime` and exposes them as nullable values:
+
+- `Transaction::getCreatedAt()` → `?DateTime`
+- `Operation::getCreatedAt()` → `?DateTime`
+- `Ledger::getClosedAt()` → `?DateTime`
+
+If Horizon returns an unexpected format that cannot be parsed, these accessors will return `null`. Guard accordingly before calling methods like `format()`.
+
 ## Donations
 
 Stellar: GCUVDZRQ6CX347AMUUWZDYSNDFAWDN6FUYM5DVYYVO574NHTAUCQAK53

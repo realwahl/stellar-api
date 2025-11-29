@@ -1,3 +1,11 @@
+### 0.7.2
+
+Patch release
+
+ - Date parsing and nullability:
+   - `Transaction::getCreatedAt()`, `Operation::getCreatedAt()`, and `Ledger::getClosedAt()` now return nullable `DateTime` (`?DateTime`).
+   - Timestamps are parsed via PHP's flexible `DateTime` to accept Horizon RFC3339 strings with `Z` or offsets; unparsable values yield `null`.
+
 ### 0.7.1
 
 Enhancements and compatibility fixes

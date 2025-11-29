@@ -51,6 +51,16 @@ class Operation extends RestApiModel
     protected $transactionHash;
 
     /**
+     * @var ?\DateTime
+     */
+    protected $createdAt;
+
+    /**
+     * @var boolean
+     */
+    protected $transactionSuccessful;
+
+    /**
      * @param array $rawData
      * @return Operation
      */
@@ -125,6 +135,8 @@ class Operation extends RestApiModel
 
         if (isset($rawData['paging_token'])) $this->pagingToken = $rawData['paging_token'];
         if (isset($rawData['transaction_hash'])) $this->transactionHash = $rawData['transaction_hash'];
+        if (isset($rawData['created_at'])) $this->setCreatedAt($rawData['created_at']);
+        if (isset($rawData['transaction_successful'])) $this->setTransactionSuccessful($rawData['transaction_successful']);
     }
 
     /**
@@ -181,5 +193,41 @@ class Operation extends RestApiModel
     public function getTransactionHash()
     {
         return $this->transactionHash;
+    }
+
+    /**
+     * @return ?\DateTime
+     */
+    public function getCreatedAt(): ?\DateTime
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @param string $createdAt
+     */
+    public function setCreatedAt(string $createdAt): void
+    {
+        try {
+            $this->createdAt = new \DateTime($createdAt);
+        } catch (\Exception $e) {
+            $this->createdAt = null;
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTransactionSuccessful(): bool
+    {
+        return $this->transactionSuccessful;
+    }
+
+    /**
+     * @param bool $transactionSuccessful
+     */
+    public function setTransactionSuccessful(bool $transactionSuccessful): void
+    {
+        $this->transactionSuccessful = $transactionSuccessful;
     }
 }
