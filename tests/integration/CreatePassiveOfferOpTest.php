@@ -28,6 +28,7 @@ class CreatePassiveOfferOpTest extends IntegrationTest
         $response = $this->horizonServer->buildTransaction($usdBankKeypair)
             ->addOperation($offerOp)
             ->submit($usdBankKeypair);
+        $this->assertTrue($response->getResult()->succeeded());
 
         // todo: add support for viewing offers on an account and verify here
         // todo: verify canceling an offer works correctly

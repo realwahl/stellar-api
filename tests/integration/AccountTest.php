@@ -48,7 +48,9 @@ class AccountTest extends IntegrationTest
     {
         // Create a new account to receive the payments and fund via friendbot
         $paymentDestKeypair = $this->getRandomFundedKeypair();
-
+        // Baseline: capture current mixed payments feed (will include create_account from friendbot)
+        $baselineAccount = $this->horizonServer->getAccount($paymentDestKeypair->getPublicKey());
+        $baselineCount = count($baselineAccount->getPayments());
         // Create a payment from a regular account
         $payingKeypair = $this->fixtureAccounts['basic1'];
         $payingAccount = $this->horizonServer->getAccount($payingKeypair->getPublicKey());
@@ -60,10 +62,23 @@ class AccountTest extends IntegrationTest
             ->addMergeOperation($paymentDestKeypair)
             ->submit($mergingKeypair);
 
-        // loading this too fast will miss the last payment
+        // Loading this too fast will miss the last payment
         sleep(1);
         $account = $this->horizonServer->getAccount($paymentDestKeypair->getPublicKey());
 
-        $this->assertCount(2, $account->getPayments());
+        // In the unfiltered payments feed, we should see both the payment and the account merge
+        $allPayments = $account->getPayments();
+
+        $types = array_map(function($op) { return $op->getAssetTransferType(); }, $allPayments);
+        $this->assertContains('payment', $types);
+        $this->assertContains('account_merge', $types);
+
+        // Assert we added exactly two new records to the unfiltered payments feed:
+        //  - one payment
+        //  - one account_merge
+        $this->assertCount($baselineCount + 2, $allPayments);
+
+        // We expect exactly 1 payment-like operation: the direct payment (account_merge is excluded)
+        $this->assertCount(1, $account->getPaymentOperations());
     }
 }

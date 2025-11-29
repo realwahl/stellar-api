@@ -124,7 +124,9 @@ class AssetAmount
     }
 
     /**
-     * @return string
+     * Returns the unscaled balance in stroops (integer string, no decimals).
+     *
+     * @return string Integer string of stroops
      */
     public function getUnscaledBalance()
     {
@@ -132,7 +134,9 @@ class AssetAmount
     }
 
     /**
-     * @return number
+     * Returns the balance formatted to 7 decimal places (Stellar precision).
+     *
+     * @return string 7-decimal string suitable for display
      */
     public function getBalance()
     {

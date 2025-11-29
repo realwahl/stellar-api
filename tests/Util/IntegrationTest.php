@@ -56,7 +56,7 @@ abstract class IntegrationTest extends TestCase
 
         // Public : Public Global Stellar Network ; September 2015
         // Testnet: Test SDF Network ; September 2015
-        $this->networkPassword = getenv('STELLAR_NETWORK_PASSWORD');
+        $this->networkPassword = getenv('STELLAR_NETWORK_PASSPHRASE');
         if (!$this->networkPassword) {
             $this->networkPassword = 'Integration Test Network ; zulucrypto';
         }
@@ -65,6 +65,14 @@ abstract class IntegrationTest extends TestCase
         $this->fixtureAssets = $this->getFixtureAssets();
 
         $this->horizonServer = Server::customNet($this->horizonBaseUrl, $this->networkPassword);
+
+        // Ensure core fixture accounts exist and are funded (friendbot)
+        foreach (['basic1', 'basic2', 'basic3'] as $name) {
+            if (!isset($this->fixtureAccounts[$name])) {
+                continue;
+            }
+            $this->ensureAccountExists($this->fixtureAccounts[$name]);
+        }
     }
 
     /**
@@ -121,5 +129,30 @@ abstract class IntegrationTest extends TestCase
             'jpy' => Asset::newCustomAsset('JPYTEST', $this->fixtureAccounts['jpyIssuingKeypair']->getPublicKey()),
             'eur' => Asset::newCustomAsset('EURTEST', $this->fixtureAccounts['eurIssuingKeypair']->getPublicKey()),
         ];
+    }
+
+    /**
+     * Ensure an account exists; if not, fund via friendbot and wait briefly.
+     *
+     * @param Keypair $keypair
+     */
+    protected function ensureAccountExists(Keypair $keypair)
+    {
+        $account = $this->horizonServer->getAccount($keypair);
+        if ($account) {
+            return;
+        }
+
+        // Attempt to fund; friendbot returns 200 on success
+        $this->horizonServer->fundAccount($keypair);
+
+        // Poll a few times until horizon ingests the account
+        for ($i = 0; $i < 5; $i++) {
+            usleep(200000); // 200ms
+            $account = $this->horizonServer->getAccount($keypair);
+            if ($account) {
+                return;
+            }
+        }
     }
 }

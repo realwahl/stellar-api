@@ -26,6 +26,7 @@ class CreateAccountOpTest extends IntegrationTest
         // Should then be able to retrieve the account and verify the balance
         $newAccount = $this->horizonServer->getAccount($newKeypair->getPublicKey());
 
-        $this->assertEquals("100.0333", $newAccount->getNativeBalance());
+        // Balance strings are formatted to 7 decimal places by design
+        $this->assertEquals("100.0333000", $newAccount->getNativeBalance());
     }
 }

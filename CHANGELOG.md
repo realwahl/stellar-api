@@ -1,3 +1,28 @@
+### 0.7.1
+
+Enhancements and compatibility fixes
+
+ - Added `Account::getPaymentOperations($sinceCursor = null, $limit = 50)` which returns only payment-like operations (`payment`, `path_payment`). Use this when you want to ignore `create_account` and `account_merge` records that also appear in Horizon's payments feed. `Account::getPayments()` remains unchanged and returns the heterogeneous feed.
+ - Standardized amount formatting at Stellar precision (7 decimal places):
+   - `StellarAmount::getScaledValue()` and `AssetAmount::getBalance()` return strings with 7 decimals.
+   - `Account::getNativeBalance()` returns a 7-decimal string (e.g., "0.0000000" when empty).
+   - Stroop accessors return integer strings (no decimals) and are recommended for arithmetic/comparison.
+ - PHP 8.3 / PHPUnit 9 compatibility:
+   - Replaced deprecated `@expectedException` annotations with `$this->expectException(...)`.
+   - `Xdr\\Type\\VariableArray` implements `Countable`.
+   - Declared `$size` on `Xdr\\XdrBuffer` (no dynamic property).
+   - Hardened `XdrModel\\Memo` validation to avoid null-related deprecations.
+ - Horizon behavior resilience:
+   - `Server::getAccount()` now detects JSON bodies with `status: 404` and returns `null` (previously could throw when certain Horizons didn’t raise exceptions).
+   - `ApiClient::postTransaction()` throws `PostTransactionException` on non-2xx (4xx) responses even when Guzzle exceptions are disabled.
+ - Integration test improvements:
+   - Tests skip gracefully when `STELLAR_HORIZON_BASE_URL` is not set.
+   - Base class auto-funds core fixtures (`basic1`, `basic2`, `basic3`) via friendbot and polls Horizon to avoid flakiness.
+   - Environment variables simplified: tests now use only `STELLAR_NETWORK_PASSPHRASE` (deprecated `STELLAR_NETWORK_PASSWORD`).
+ - Tooling/documentation:
+   - Normalized shell script line endings (LF) and added `.gitattributes` to enforce.
+   - README: documented payments feed vs. payment operations, amount formatting/precision, and integration environment setup.
+
 ### 0.7.0
 
  * Additional support for BumpSequenceOp: it is now read correctly when listing operations
@@ -125,3 +150,4 @@ New Features
 
 ### 0.1.0
  * Initial beta version
+

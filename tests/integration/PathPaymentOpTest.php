@@ -36,7 +36,7 @@ class PathPaymentOpTest extends IntegrationTest
         $envelope = $this->horizonServer->buildTransaction($sourceKeypair)
             ->addOperation($pathPayment)
             ->getTransactionEnvelope();
-
+        $this->assertNotNull($envelope);
         // todo: need additional fixtures to verify path payment
     }
 }

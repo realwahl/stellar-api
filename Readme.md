@@ -91,6 +91,60 @@ https://www.stellar.org/developers/guides/get-started/create-account.html
 
 Additional examples are available in the [examples](examples/) directory 
 
+## Payments Feed vs. Payment Operations
+
+Horizon’s `/accounts/{id}/payments` endpoint returns a mixed feed of records that are payment-related but include more than just payment operations. This library exposes two accessors on `Account`:
+
+- `Account::getPayments($sinceCursor = null, $limit = 50)`
+  - Returns the heterogeneous feed as-is, mapping each record to a typed model.
+  - Includes: `create_account`, `payment`, `account_merge`, and `path_payment`.
+
+- `Account::getPaymentOperations($sinceCursor = null, $limit = 50)`
+  - Returns only payment-like operations.
+  - Includes: `payment`, `path_payment`.
+  - Excludes: `create_account`, `account_merge`.
+
+Use `getPaymentOperations()` when you only care about actual transfer operations and want to ignore account creations or merges that may also appear in the payments feed.
+
+When running integration tests, set the following environment variables:
+
+- `STELLAR_HORIZON_BASE_URL` (e.g., `http://localhost:8000/`)
+- `STELLAR_NETWORK_PASSPHRASE` (e.g., `Integration Test Network ; zulucrypto`)
+
+Note: `STELLAR_NETWORK_PASSWORD` is no longer used.
+
+Examples (choose one set):
+
+- Local integration network (Docker):
+  - `export STELLAR_HORIZON_BASE_URL=http://localhost:8000/`
+  - `export STELLAR_NETWORK_PASSPHRASE='Integration Test Network ; zulucrypto'`
+
+- Stellar Testnet:
+  - `export STELLAR_HORIZON_BASE_URL=https://horizon-testnet.stellar.org/`
+  - `export STELLAR_NETWORK_PASSPHRASE='Test SDF Network ; September 2015'`
+
+- Stellar Public Network:
+  - `export STELLAR_HORIZON_BASE_URL=https://horizon.stellar.org/`
+  - `export STELLAR_NETWORK_PASSPHRASE='Public Global Stellar Network ; September 2015'`
+
+## Amount Formatting and Precision
+
+Stellar amounts are precise to 7 decimal places (1 XLM = 10,000,000 stroops). This library follows that convention:
+
+- Display values (scaled):
+  - `StellarAmount::getScaledValue()` → returns a string with 7 decimal places (e.g., `"12.3400000"`).
+  - `AssetAmount::getBalance()` → same 7-decimal string.
+  - `Account::getNativeBalance()` → 7-decimal string; returns `"0.0000000"` when empty.
+
+- Storage/comparison values (stroops):
+  - `StellarAmount::getUnscaledString()` → integer string of stroops (e.g., `"123400000"`).
+  - `AssetAmount::getUnscaledBalance()` → stroops as an integer string.
+  - `Account::getNativeBalanceStroops()` → stroops as an integer string.
+
+Guidance:
+- Do arithmetic and comparisons using stroops whenever possible.
+- Format for display using the 7-decimal methods above.
+
 ## Donations
 
 Stellar: GCUVDZRQ6CX347AMUUWZDYSNDFAWDN6FUYM5DVYYVO574NHTAUCQAK53

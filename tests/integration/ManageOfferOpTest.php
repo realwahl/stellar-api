@@ -28,6 +28,7 @@ class ManageOfferOpTest extends IntegrationTest
         $response = $this->horizonServer->buildTransaction($usdBankKeypair)
             ->addOperation($offerOp)
             ->submit($usdBankKeypair);
+        $this->assertTrue($response->getResult()->succeeded());
 
         // todo: add support for offers and verify here
         // todo: verify canceling an offer

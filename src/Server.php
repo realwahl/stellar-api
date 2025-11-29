@@ -4,7 +4,7 @@ namespace ZuluCrypto\StellarSdk;
 
 
 use phpseclib3\Math\BigInteger;
-use Prophecy\Exception\InvalidArgumentException;
+use InvalidArgumentException; // Use core InvalidArgumentException for API parameter validation
 use ZuluCrypto\StellarSdk\Horizon\ApiClient;
 use ZuluCrypto\StellarSdk\Horizon\Exception\HorizonException;
 use ZuluCrypto\StellarSdk\Model\Account;
@@ -97,6 +97,11 @@ class Server
 
             // A problem we can't handle, rethrow
             throw $e;
+        }
+
+        // Some Horizon deployments return a JSON body with status 404 instead of throwing
+        if ($response && $response->getField('status') === 404) {
+            return null;
         }
 
         $account = Account::fromHorizonResponse($response);

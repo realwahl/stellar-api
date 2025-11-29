@@ -8,6 +8,10 @@ use phpseclib3\Math\BigInteger;
 use ZuluCrypto\StellarSdk\Horizon\Api\HorizonResponse;
 use ZuluCrypto\StellarSdk\Keypair;
 use ZuluCrypto\StellarSdk\Transaction\TransactionBuilder;
+use ZuluCrypto\StellarSdk\Model\Payment;
+use ZuluCrypto\StellarSdk\Model\PathPayment;
+use ZuluCrypto\StellarSdk\Model\CreateAccountOperation;
+use ZuluCrypto\StellarSdk\Model\AccountMergeOperation;
 use ZuluCrypto\StellarSdk\Util\MathSafety;
 use ZuluCrypto\StellarSdk\XdrModel\Asset;
 use ZuluCrypto\StellarSdk\XdrModel\Operation\PaymentOp;
@@ -227,9 +231,21 @@ class Account extends RestApiModel
     }
 
     /**
-     * @param null $sinceCursor
-     * @param int  $limit
-     * @return array|AssetTransferInterface[]|RestApiModel[]
+     * Returns a heterogeneous list of payment-related records for this account
+     * as returned by Horizon's `/accounts/{id}/payments` endpoint.
+     *
+     * Includes multiple operation types present in that feed:
+     *  - create_account
+     *  - payment
+     *  - account_merge
+     *  - path_payment
+     *
+     * If you only need payment-like operations (and want to ignore account creation/merge
+     * records), call {@see Account::getPaymentOperations()} instead.
+     *
+     * @param null $sinceCursor Cursor from which to start.
+     * @param int  $limit       Max records to fetch.
+     * @return array|AssetTransferInterface[]|RestApiModel[] Typed model instances per record type.
      */
     public function getPayments($sinceCursor = null, $limit = 50)
     {
@@ -273,6 +289,55 @@ class Account extends RestApiModel
     }
 
     /**
+     * Returns only payment-like operations for this account.
+     *
+     * Filters the Horizon `/accounts/{id}/payments` feed to include only:
+     *  - payment
+     *  - path_payment
+     *
+     * Excludes record types that may also appear in that feed:
+     *  - create_account
+     *  - account_merge
+     *
+     * To retrieve the full, unfiltered feed, call {@see Account::getPayments()}.
+     *
+     * @param null $sinceCursor Cursor from which to start.
+     * @param int  $limit       Max records to fetch.
+     * @return array|AssetTransferInterface[]
+     */
+    public function getPaymentOperations($sinceCursor = null, $limit = 50)
+    {
+        $payments = [];
+
+        $url = sprintf('/accounts/%s/payments', $this->accountId);
+        $params = [];
+
+        if ($sinceCursor) $params['cursor'] = $sinceCursor;
+        if ($limit) $params['limit'] = $limit;
+
+        $query = $params ? ('?' . http_build_query($params)) : '';
+        $response = $this->apiClient->get($url . $query);
+        $rawRecords = $response->getRecords($limit);
+
+        foreach ($rawRecords as $rawRecord) {
+            if ($rawRecord['type'] === 'payment') {
+                $result = Payment::fromRawResponseData($rawRecord);
+            }
+            elseif ($rawRecord['type'] === 'path_payment') {
+                $result = PathPayment::fromRawResponseData($rawRecord);
+            }
+            else {
+                continue;
+            }
+
+            $result->setApiClient($this->getApiClient());
+            $payments[] = $result;
+        }
+
+        return $payments;
+    }
+
+    /**
      * See ApiClient::streamPayments
      *
      * @param null $sinceCursor
@@ -284,9 +349,11 @@ class Account extends RestApiModel
     }
 
     /**
-     * Returns a string representing the native balance
+     * Returns the native balance formatted to 7 decimal places (Stellar precision).
      *
-     * @return string
+     * Example: "12.3456789". If no native balance is present, returns "0.0000000".
+     *
+     * @return string 7-decimal string suitable for display
      * @throws \ErrorException
      */
     public function getNativeBalance()
@@ -297,13 +364,14 @@ class Account extends RestApiModel
             if ($balance->isNativeAsset()) return $balance->getBalance();
         }
 
-        return 0;
+        // Always return 7-decimal precision for display consistency
+        return '0.0000000';
     }
 
     /**
-     * Returns the balance in stroops
+     * Returns the native balance in stroops (integer string, no decimals).
      *
-     * @return string
+     * @return string Integer string of stroops
      * @throws \ErrorException
      */
     public function getNativeBalanceStroops()
@@ -318,10 +386,10 @@ class Account extends RestApiModel
     }
 
     /**
-     * Returns the numeric balance of the given asset
+     * Returns the balance of a custom asset formatted to 7 decimal places, or null if not present.
      *
      * @param Asset $asset
-     * @return null|string
+     * @return null|string 7-decimal string or null if asset not found
      */
     public function getCustomAssetBalanceValue(Asset $asset)
     {
@@ -354,10 +422,10 @@ class Account extends RestApiModel
     }
 
     /**
-     * Returns the balance of a custom asset in stroops
+     * Returns the balance of a custom asset in stroops (integer string), or null if not present.
      *
      * @param Asset $asset
-     * @return null|string
+     * @return null|string Integer string of stroops
      * @throws \ErrorException
      */
     public function getCustomAssetBalanceStroops(Asset $asset)

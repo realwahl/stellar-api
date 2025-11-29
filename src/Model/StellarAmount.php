@@ -117,7 +117,12 @@ class StellarAmount
     }
 
     /**
-     * @return float|int
+     * Returns the scaled value as a string with 7 decimal places (Stellar precision).
+     *
+     * Example: "1.0000000" or "12.3456789". Use this for display.
+     * For storage/comparison, prefer stroops via {@see StellarAmount::getUnscaledString()}.
+     *
+     * @return string 7-decimal string suitable for display
      */
     public function getScaledValue()
     {
@@ -130,9 +135,11 @@ class StellarAmount
     }
 
     /**
-     * Returns the raw value in stroops as a string
+     * Returns the raw value in stroops as an integer string (no decimals).
      *
-     * @return string
+     * Example: "10000000" represents 1 XLM.
+     *
+     * @return string Integer string of stroops suitable for storage/comparison
      */
     public function getUnscaledString()
     {

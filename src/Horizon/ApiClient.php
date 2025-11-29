@@ -505,6 +505,13 @@ class ApiClient
             }
         }
 
+        // With Guzzle exceptions disabled, failures return a response with 4xx status.
+        // Detect that and throw a PostTransactionException to match expected behavior.
+        if ($apiResponse->getStatusCode() >= 400) {
+            $decoded = Json::mustDecode($apiResponse->getBody());
+            throw PostTransactionException::fromRawResponse($relativeUrl, 'POST', $decoded);
+        }
+
         return new PostTransactionResponse($apiResponse->getBody());
     }
 
