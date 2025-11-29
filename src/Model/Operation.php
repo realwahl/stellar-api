@@ -65,7 +65,7 @@ class Operation extends RestApiModel
                 $object = new CreateAccountOperation($rawData['id'], $rawData['type']);
                 break;
             case Operation::TYPE_PAYMENT:
-                $object = new Payment($rawData['id'], $rawData['type']);
+                $object = new Payment($rawData['id']);
                 break;
             case Operation::TYPE_PATH_PAYMENT:
                 $object = new PathPayment($rawData['id'], $rawData['type']);
@@ -120,7 +120,6 @@ class Operation extends RestApiModel
     {
         parent::loadFromRawResponseData($rawData);
 
-        $this->id = $rawData['id'];
         $this->type = $rawData['type'];
         $this->typeI = $rawData['type_i'];
 

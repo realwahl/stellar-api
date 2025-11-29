@@ -200,7 +200,7 @@ class Server
      * No additional validation is performed on this transaction
      *
      * @param $base64TransactionEnvelope
-     * @return Horizon\Api\HorizonResponse
+     * @return Horizon\Api\PostTransactionResponse
      */
     public function submitB64Transaction($base64TransactionEnvelope)
     {

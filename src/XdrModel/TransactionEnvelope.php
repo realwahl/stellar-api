@@ -91,7 +91,7 @@ class TransactionEnvelope implements XdrEncodableInterface
     /**
      * Adds signatures using the given keypairs or secret key strings
      *
-     * @param Keypair[]|string[] $keypairsOrsecretKeyStrings
+     * @param Keypair[]|Keypair|string[] $keypairsOrsecretKeyStrings
      * @return $this
      */
     public function sign($keypairsOrsecretKeyStrings, Server $server = null)
