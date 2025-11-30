@@ -47,7 +47,7 @@ class Ledger extends RestApiModel
     /**
      * When this ledger was closed
      *
-     * @var \DateTime
+     * @var ?\DateTime
      */
     protected $closedAt;
 
@@ -113,7 +113,14 @@ class Ledger extends RestApiModel
         if (isset($rawData['sequence'])) $this->sequence = strval($rawData['sequence']);
         if (isset($rawData['transaction_count'])) $this->transactionCount = $rawData['transaction_count'];
         if (isset($rawData['operation_count'])) $this->operationCount = $rawData['operation_count'];
-        if (isset($rawData['closed_at'])) $this->closedAt = \DateTime::createFromFormat(DATE_ISO8601, $rawData['closed_at']);
+        if (isset($rawData['closed_at'])) {
+            try {
+                $this->closedAt = new \DateTime($rawData['closed_at']);
+            }
+            catch (\Exception $e) {
+                $this->closedAt = null;
+            }
+        }
         if (isset($rawData['total_coins'])) $this->totalCoins = strval($rawData['total_coins']);
         if (isset($rawData['fee_pool'])) $this->feePool = $rawData['fee_pool'];
         if (isset($rawData['base_fee'])) $this->baseFee = $rawData['base_fee'];
@@ -203,7 +210,7 @@ class Ledger extends RestApiModel
     }
 
     /**
-     * @return \DateTime
+     * @return ?\DateTime
      */
     public function getClosedAt()
     {
@@ -211,7 +218,7 @@ class Ledger extends RestApiModel
     }
 
     /**
-     * @param \DateTime $closedAt
+     * @param \DateTime|null $closedAt
      */
     public function setClosedAt($closedAt)
     {

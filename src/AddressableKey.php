@@ -86,7 +86,7 @@ class AddressableKey
 
         // Verify version
         if ($version != self::VERSION_BYTE_SEED) {
-            throw new \InvalidArgumentException('Invalid version');
+            throw new \InvalidArgumentException('Invalid version ' . $version . ' != ' . self::VERSION_BYTE_SEED);
         }
         // Verify checksum of version + payload
         if (!Checksum::verify($checksum, substr($decoded, 0, -2))) {

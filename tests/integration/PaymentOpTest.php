@@ -35,7 +35,10 @@ class PaymentOpTest extends IntegrationTest
             ->getAccount($destinationKeypair)
             ->getNativeBalance();
 
-        $this->assertEquals($prevBalance + 10.0000001, $newBalance);
+        // Build expected as a 7-decimal string to match library formatting
+        $expected = number_format(((float)$prevBalance + 10.0000001), 7, '.', '');
+
+        $this->assertEquals($expected, $newBalance);
     }
 
     /**

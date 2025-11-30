@@ -145,6 +145,115 @@ Guidance:
 - Do arithmetic and comparisons using stroops whenever possible.
 - Format for display using the 7-decimal methods above.
 
+## Timestamps and Nullability
+
+Horizon returns RFC3339 timestamps (often with a trailing `Z`). This library parses these using PHP's `DateTime` and exposes them as nullable values:
+
+- `Transaction::getCreatedAt()` → `?DateTime`
+- `Operation::getCreatedAt()` → `?DateTime`
+- `Ledger::getClosedAt()` → `?DateTime`
+
+If Horizon returns an unexpected format that cannot be parsed, these accessors will return `null`. Guard accordingly before calling methods like `format()`.
+
+## Hardware Wallet Tests
+
+This project includes integration tests that exercise signing via a hardware wallet (currently Trezor is supported). These tests compare signatures produced by the device with signatures produced by this library, and prompt you to confirm details on the device screen.
+
+Prerequisites
+
+- A Trezor device (Model T recommended) or the Trezor emulator.
+- `trezorctl` available in your `PATH` (or set `TREZOR_BIN_PATH`).
+  - Docs: https://wiki.trezor.io/Trezor_Suite_command-line_interface
+  - Install example (Python/pip): `pip install trezor` (provides `trezorctl`).
+- A Horizon endpoint and network passphrase (Public, Testnet, or local integration network).
+
+Environment variables
+
+- Required:
+  - `STELLAR_HORIZON_BASE_URL` — e.g. `https://horizon-testnet.stellar.org/`
+  - `STELLAR_NETWORK_PASSPHRASE` — e.g. `Test SDF Network ; September 2015`
+  - `STELLAR_SIGNING_PROVIDER` — set to `trezor`
+- Optional:
+  - `TREZOR_BIN_PATH` — full path to `trezorctl` if not in your `PATH`
+
+Testnet quick start
+
+```
+export STELLAR_HORIZON_BASE_URL=https://horizon-testnet.stellar.org/
+export STELLAR_NETWORK_PASSPHRASE='Test SDF Network ; September 2015'
+export STELLAR_SIGNING_PROVIDER=trezor
+# optional if trezorctl is not in PATH:
+# export TREZOR_BIN_PATH=/usr/local/bin/trezorctl
+
+./tests/run-hardware-wallet.sh --filter testCreateAccount
+```
+
+Test flow and expected prompts
+
+- Tests will print human‑readable prompts before each signing action. The device should display the same transaction details (source, destination, amounts, memo) for you to confirm.
+- After confirmation, the test asserts that the device’s signature matches the library’s signature for the same payload.
+
+Derivation path and mnemonic used by tests
+
+- The tests use the standard Stellar BIP‑44 path: `m/44'/148'/0'`.
+- A fixed test mnemonic is embedded for reproducibility and to avoid prompting for secrets during CI:
+  - `alcohol woman abuse must during monitor noble actual mixed trade anger aisle`
+- Do not use this mnemonic for real funds.
+
+Running specific tests
+
+```
+./tests/run-hardware-wallet.sh --filter testCustomAsset12Payment
+```
+
+Troubleshooting
+
+- Device not detected: ensure `trezorctl list` finds your device; on Linux, install udev rules per Trezor docs and replug the device.
+- Permission errors: try running `trezorctl` once manually; on macOS, grant USB permissions to your terminal if prompted.
+- Wrong network: ensure `STELLAR_NETWORK_PASSPHRASE` matches your Horizon endpoint.
+- Emulator: start the Trezor emulator before running tests and ensure `trezorctl` can communicate with it.
+
+## Integration Tests
+
+These tests exercise the library against a live Horizon endpoint (either Stellar Testnet, Public network, or a local integration network). A small wrapper script validates required environment variables and provides quick-start instructions when missing.
+
+Run
+
+```
+./tests/run-integration.sh
+```
+
+Environment variables
+
+- Required:
+  - `STELLAR_HORIZON_BASE_URL` — e.g. `https://horizon-testnet.stellar.org/`
+  - `STELLAR_NETWORK_PASSPHRASE` — e.g. `Test SDF Network ; September 2015`
+
+Testnet quick start
+
+```
+export STELLAR_HORIZON_BASE_URL=https://horizon-testnet.stellar.org/
+export STELLAR_NETWORK_PASSPHRASE='Test SDF Network ; September 2015'
+
+./tests/run-integration.sh
+```
+
+Filtering tests
+
+```
+./tests/run-integration.sh --filter PaymentOpTest
+```
+
+Debug helper: XDR extraction
+
+- A debug helper (`TransactionBuilderTest::testGetXdr`) is disabled by default and won’t appear as skipped.
+- To enable it explicitly, set the environment variable and run (filter optional):
+
+```
+export INCLUDE_PHPUNIT_DEBUG=1
+./tests/run-integration.sh --filter testGetXdr
+```
+
 ## Donations
 
 Stellar: GCUVDZRQ6CX347AMUUWZDYSNDFAWDN6FUYM5DVYYVO574NHTAUCQAK53

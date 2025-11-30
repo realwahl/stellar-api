@@ -148,6 +148,7 @@ class ApiClient
     /**
      * @param $base64TransactionEnvelope
      * @return PostTransactionResponse
+     * @throws HorizonException
      */
     public function submitB64Transaction($base64TransactionEnvelope)
     {

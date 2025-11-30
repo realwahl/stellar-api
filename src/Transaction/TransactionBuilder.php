@@ -260,7 +260,7 @@ class TransactionBuilder implements XdrEncodableInterface
      * @param Asset               $asset
      * @param number|BigInteger   $amount number representing lumens or BigInteger representing stroops
      * @param string|Keypair      $destinationAccountId
-     * $param null|string|Keypair $sourceAccountId
+     * @param null|string|Keypair $sourceAccountId
      * @return TransactionBuilder
      */
     public function addCustomAssetPaymentOp(Asset $asset, $amount, $destinationAccountId, $sourceAccountId = null)
