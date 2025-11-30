@@ -39,11 +39,17 @@ class TransactionBuilderTest extends IntegrationTest
     /**
      * Helper method to extract OperationResult XDR for writing other tests / debugging
      *
+     * Runs only when INCLUDE_PHPUNIT_DEBUG=1 is set in the environment; otherwise it is skipped.
+     *
      * @group requires-integrationnet
+     * @group include-phpunit-debug
      */
     public function testGetXdr()
     {
-        $this->markTestSkipped('For debugging');
+        $flag = getenv('INCLUDE_PHPUNIT_DEBUG');
+        if ($flag !== '1') {
+            $this->markTestSkipped('Set INCLUDE_PHPUNIT_DEBUG=1 to enable this debug helper.');
+        }
 
         $sourceKeypair = $this->fixtureAccounts['basic1'];
         $destinationKeypair = $this->fixtureAccounts['basic2'];

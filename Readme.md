@@ -213,6 +213,47 @@ Troubleshooting
 - Wrong network: ensure `STELLAR_NETWORK_PASSPHRASE` matches your Horizon endpoint.
 - Emulator: start the Trezor emulator before running tests and ensure `trezorctl` can communicate with it.
 
+## Integration Tests
+
+These tests exercise the library against a live Horizon endpoint (either Stellar Testnet, Public network, or a local integration network). A small wrapper script validates required environment variables and provides quick-start instructions when missing.
+
+Run
+
+```
+./tests/run-integration.sh
+```
+
+Environment variables
+
+- Required:
+  - `STELLAR_HORIZON_BASE_URL` — e.g. `https://horizon-testnet.stellar.org/`
+  - `STELLAR_NETWORK_PASSPHRASE` — e.g. `Test SDF Network ; September 2015`
+
+Testnet quick start
+
+```
+export STELLAR_HORIZON_BASE_URL=https://horizon-testnet.stellar.org/
+export STELLAR_NETWORK_PASSPHRASE='Test SDF Network ; September 2015'
+
+./tests/run-integration.sh
+```
+
+Filtering tests
+
+```
+./tests/run-integration.sh --filter PaymentOpTest
+```
+
+Debug helper: XDR extraction
+
+- A debug helper (`TransactionBuilderTest::testGetXdr`) is disabled by default and won’t appear as skipped.
+- To enable it explicitly, set the environment variable and run (filter optional):
+
+```
+export INCLUDE_PHPUNIT_DEBUG=1
+./tests/run-integration.sh --filter testGetXdr
+```
+
 ## Donations
 
 Stellar: GCUVDZRQ6CX347AMUUWZDYSNDFAWDN6FUYM5DVYYVO574NHTAUCQAK53

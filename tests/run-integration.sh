@@ -32,4 +32,14 @@ fi
 # Run relative to the tests/ directory
 cd "$DIR"
 
-../vendor/bin/phpunit -c "$DIR" --group requires-integrationnet "$@"
+# Build group flags: include PHP Unit debug group based on env var
+PHPUNIT_GROUP_FLAGS=(--group requires-integrationnet)
+
+# Toggle include-phpunit-debug group when INCLUDE_PHPUNIT_DEBUG=1
+if [[ "${INCLUDE_PHPUNIT_DEBUG:-}" == "1" ]]; then
+  PHPUNIT_GROUP_FLAGS+=(--group include-phpunit-debug)
+else
+  PHPUNIT_GROUP_FLAGS+=(--exclude-group include-phpunit-debug)
+fi
+
+../vendor/bin/phpunit -c "$DIR" "${PHPUNIT_GROUP_FLAGS[@]}" "$@"
