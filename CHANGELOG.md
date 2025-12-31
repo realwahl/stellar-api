@@ -1,3 +1,29 @@
+### 0.7.4
+
+Maintenance and API improvements
+
+ - Account transaction/payment queries:
+   - `Account::getTransactions()` and `Account::getPayments()` accept `order` and `includeFailed` parameters and forward them to Horizon.
+   - These methods now declare `HorizonException` in their docs.
+ - Transaction model enhancements:
+   - Added `Transaction::isSuccessful()`/`setIsSuccessful()` and map the Horizon `successful` field.
+   - Use `fee_charged` when present, and throw `HorizonException` on unhandled payment types.
+ - XDR encoding:
+   - `signedBigInteger64` now handles zero values without triggering GMP errors.
+ - Testing/tooling:
+   - Integration setup and test bootstrapping now provide environment fallbacks and actionable guidance.
+   - Integration and hardware wallet scripts now resolve PHPUnit from the package, a consumer install, or PATH.
+   - Integration runner detects missing fixtures and can prompt to run the setup script.
+
+### 0.7.3
+
+Maintenance release
+
+ - Testing/tooling:
+   - Added a portable PHPUnit bootstrap for running from the package or a consumer project.
+   - PHPUnit config now uses the new bootstrap and excludes integration/hardware groups by default.
+   - Integration setup now uses the portable bootstrap and provides environment fallbacks.
+
 ### 0.7.2
 
 Patch release
@@ -158,4 +184,3 @@ New Features
 
 ### 0.1.0
  * Initial beta version
-

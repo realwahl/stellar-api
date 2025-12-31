@@ -10,7 +10,7 @@
     convertWarningsToExceptions="true"
     processIsolation="false"
     stopOnFailure="true"
-    bootstrap="../vendor/autoload.php"
+    bootstrap="bootstrap.php"
 >
 
     <php>

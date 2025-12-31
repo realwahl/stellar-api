@@ -3,6 +3,8 @@
 
 namespace ZuluCrypto\StellarSdk\Model;
 
+use ZuluCrypto\StellarSdk\Horizon\Exception\HorizonException;
+
 /**
  * See: https://www.stellar.org/developers/horizon/reference/resources/transaction.html
  */
@@ -103,6 +105,11 @@ class Transaction extends RestApiModel
     protected $createdAt;
 
     /**
+     * @var boolean
+     */
+    protected $isSuccessful;
+
+    /**
      * @param array $rawData
      * @return Transaction
      */
@@ -145,6 +152,7 @@ class Transaction extends RestApiModel
         if (isset($rawData['source_account'])) $this->sourceAccountId = $rawData['source_account'];
         if (isset($rawData['source_account_sequence'])) $this->sourceAccountSequence = $rawData['source_account_sequence'];
         if (isset($rawData['fee_paid'])) $this->feePaid = $rawData['fee_paid'];
+        if (isset($rawData['fee_charged'])) $this->feePaid = $rawData['fee_charged'];
         if (isset($rawData['operation_count'])) $this->operationCount = $rawData['operation_count'];
         if (isset($rawData['envelope_xdr'])) $this->envelopeXdr = $rawData['envelope_xdr'];
         if (isset($rawData['result_xdr'])) $this->resultXdr = $rawData['result_xdr'];
@@ -154,12 +162,14 @@ class Transaction extends RestApiModel
         if (isset($rawData['result_code_s'])) $this->resultCodeS = $rawData['result_code_s'];
         if (isset($rawData['memo_type'])) $this->memoType = $rawData['memo_type'];
         if (isset($rawData['memo'])) $this->memo = $rawData['memo'];
+        if (isset($rawData['successful'])) $this->isSuccessful = $rawData['successful'];
     }
 
     /**
      * @param null $sinceCursor
-     * @param int  $limit
-     * @return array|AssetTransferInterface[]|RestApiModel[]
+     * @param int $limit
+     * @return array|CreateAccountOperation[]|Payment[]|AccountMergeOperation[]|PathPayment[]
+     * @throws HorizonException
      */
     public function getPayments($sinceCursor = null, $limit = 50)
     {
@@ -193,6 +203,8 @@ class Transaction extends RestApiModel
                 case 'path_payment':
                     $result = PathPayment::fromRawResponseData($rawRecord);
                     break;
+                default:
+                    throw new HorizonException('Unhandled payment type ' . $rawRecord['type']);
             }
 
             $result->setApiClient($this->getApiClient());
@@ -441,5 +453,21 @@ class Transaction extends RestApiModel
     public function setCreatedAt($createdAt)
     {
         $this->createdAt = $createdAt;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isSuccessful()
+    {
+        return $this->isSuccessful;
+    }
+
+    /**
+     * @param boolean $isSuccessful
+     */
+    public function setIsSuccessful($isSuccessful)
+    {
+        $this->isSuccessful = $isSuccessful;
     }
 }

@@ -10,7 +10,9 @@
  *
  */
 
-require_once(__DIR__ . '/../vendor/autoload.php');
+// Use portable bootstrap so this can run either inside the package
+// or from a consumer project's test runner
+require_once __DIR__ . '/bootstrap.php';
 
 
 use ZuluCrypto\StellarSdk\Keypair;
