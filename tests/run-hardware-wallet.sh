@@ -38,4 +38,21 @@ fi
 # Run relative to the tests/ directory
 cd "$DIR"
 
-../vendor/bin/phpunit -c "$DIR" --group requires-hardwarewallet "$@"
+# Resolve phpunit binary for both in-repo and consumer installs.
+PHPUNIT_BIN="$DIR/../vendor/bin/phpunit"
+if [[ ! -x "$PHPUNIT_BIN" ]]; then
+  PHPUNIT_BIN="$DIR/../../../bin/phpunit"
+fi
+if [[ ! -x "$PHPUNIT_BIN" ]]; then
+  if command -v phpunit >/dev/null 2>&1; then
+    PHPUNIT_BIN="phpunit"
+  else
+    echo "phpunit not found. Checked:" >&2
+    echo "  - $DIR/../vendor/bin/phpunit" >&2
+    echo "  - $DIR/../../../bin/phpunit" >&2
+    echo "  - phpunit in PATH" >&2
+    exit 1
+  fi
+fi
+
+"$PHPUNIT_BIN" -c "$DIR" --group requires-hardwarewallet "$@"

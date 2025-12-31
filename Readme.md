@@ -206,6 +206,8 @@ Running specific tests
 ./tests/run-hardware-wallet.sh --filter testCustomAsset12Payment
 ```
 
+Note: the wrapper resolves PHPUnit from this package, a consumer project's vendor bin, or your PATH.
+
 Troubleshooting
 
 - Device not detected: ensure `trezorctl list` finds your device; on Linux, install udev rules per Trezor docs and replug the device.
@@ -222,6 +224,9 @@ Run
 ```
 ./tests/run-integration.sh
 ```
+
+Note: the wrapper resolves PHPUnit from this package, a consumer project's vendor bin, or your PATH.
+If the integration fixtures are missing, the script will prompt to run `tests/setup-integration-network.php` before continuing.
 
 Environment variables
 

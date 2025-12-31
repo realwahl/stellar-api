@@ -95,17 +95,19 @@ class XdrEncoder
     {
         $xdrBytes = '';
         $bigIntBytes = $value->toBytes(true);
-        $bigIntBits = $value->toBits(true);
+        if ($bigIntBytes === '') {
+            $bigIntBytes = chr(0);
+        }
 
         // Special case: MAX_UINT_64 will look like 00ffffffffffffffff and have an
         // extra preceeding byte we need to get rid of
-        if (strlen($bigIntBytes) === 9 && substr($value->toHex(true), 0, 2) === '00') {
+        if (strlen($bigIntBytes) === 9 && substr(bin2hex($bigIntBytes), 0, 2) === '00') {
             $bigIntBytes = substr($bigIntBytes, 1);
         }
 
         $paddingChar = chr(0);
         // If the number is negative, pad with 0xFF
-        if (substr($bigIntBits, 0, 1) == 1) {
+        if ($value->compare(new BigInteger('0')) < 0) {
             $paddingChar = chr(255);
         }
 

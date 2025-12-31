@@ -168,10 +168,13 @@ class Account extends RestApiModel
 
     /**
      * @param null $sinceCursor
-     * @param int  $limit
+     * @param int $limit
+     * @param string $order
+     * @param bool $includeFailed
      * @return Transaction[]
+     * @throws \ZuluCrypto\StellarSdk\Horizon\Exception\HorizonException
      */
-    public function getTransactions($sinceCursor = null, $limit = 50)
+    public function getTransactions($sinceCursor = null, $limit = 50, $order = 'asc', $includeFailed = false)
     {
         $transactions = [];
 
@@ -180,6 +183,8 @@ class Account extends RestApiModel
 
         if ($sinceCursor) $params['cursor'] = $sinceCursor;
         if ($limit) $params['limit'] = $limit;
+        $params['order'] = ($order === 'desc') ? 'desc' : 'asc';
+        $params['include_failed'] = $includeFailed ? 'true' : 'false';
 
         if ($params) {
             $url .= '?' . http_build_query($params);
@@ -244,10 +249,13 @@ class Account extends RestApiModel
      * records), call {@see Account::getPaymentOperations()} instead.
      *
      * @param null $sinceCursor Cursor from which to start.
-     * @param int  $limit       Max records to fetch.
+     * @param int $limit       Max records to fetch.
+     * @param string $order     Sorting order
+     * @param bool $includeFailed   Include failed operations
      * @return array|AssetTransferInterface[]|RestApiModel[] Typed model instances per record type.
+     * @throws \ZuluCrypto\StellarSdk\Horizon\Exception\HorizonException
      */
-    public function getPayments($sinceCursor = null, $limit = 50)
+    public function getPayments($sinceCursor = null, $limit = 50, $order = 'asc', $includeFailed = false)
     {
         $results = [];
 
@@ -256,6 +264,8 @@ class Account extends RestApiModel
 
         if ($sinceCursor) $params['cursor'] = $sinceCursor;
         if ($limit) $params['limit'] = $limit;
+        $params['order'] = ($order === 'desc') ? 'desc' : 'asc';
+        $params['include_failed'] = $includeFailed ? 'true' : 'false';
 
         if ($params) {
             $url .= '?' . http_build_query($params);
@@ -386,7 +396,7 @@ class Account extends RestApiModel
     }
 
     /**
-     * Returns the balance of a custom asset formatted to 7 decimal places, or null if not present.
+     * Returns the numeric balance of a custom asset formatted to 7 decimal places, or null if not present.
      *
      * @param Asset $asset
      * @return null|string 7-decimal string or null if asset not found
