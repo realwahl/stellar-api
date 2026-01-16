@@ -18,8 +18,9 @@ class ChangeTrustOpTest extends IntegrationTest
         $keypair = $this->getRandomFundedKeypair();
         $usdAsset = $this->fixtureAssets['usd'];
 
+        // Use a string to avoid integer -> float conversion on some platforms
         $this->horizonServer->buildTransaction($keypair)
-            ->addChangeTrustOp($usdAsset, 4294967297)// 2^32 + 1
+            ->addChangeTrustOp($usdAsset, '4294967297')// 2^32 + 1
             ->submit($keypair);
 
         // Verify trustline is added
