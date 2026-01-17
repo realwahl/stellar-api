@@ -28,7 +28,7 @@ class AllowTrustOp extends Operation
      */
     protected $isAuthorized;
 
-    public function __construct(Asset $asset, AccountId $trustor = null, $sourceAccountId = null)
+    public function __construct(Asset $asset, ?AccountId $trustor = null, $sourceAccountId = null)
     {
         if ($asset->isNative()) throw new \InvalidArgumentException('Trust cannot be added for native assets');
 

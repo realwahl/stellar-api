@@ -89,7 +89,7 @@ class Transaction
      * @param Server $server
      * @return TransactionBuilder
      */
-    public function toTransactionBuilder(Server $server = null)
+    public function toTransactionBuilder(?Server $server = null)
     {
         $builder = new TransactionBuilder($this->sourceAccountId->getAccountIdString());
 

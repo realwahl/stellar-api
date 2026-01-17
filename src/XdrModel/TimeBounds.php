@@ -33,7 +33,7 @@ class TimeBounds
      * @param \DateTime|null $maxTime
      * @throws \ErrorException
      */
-    public function __construct(\DateTime $minTime = null, \DateTime $maxTime = null)
+    public function __construct(?\DateTime $minTime = null, ?\DateTime $maxTime = null)
     {
         MathSafety::require64Bit();
 

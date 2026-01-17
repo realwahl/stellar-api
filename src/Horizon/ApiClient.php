@@ -240,9 +240,9 @@ class ApiClient
         });
      *
      * @param null $sinceCursor
-     * @param callable $callback
+     * @param callable|null $callback
      */
-    public function streamEffects($sinceCursor = 'now', callable $callback = null)
+    public function streamEffects($sinceCursor = 'now', ?callable $callback = null)
     {
         $url = sprintf('/effects');
         $params = [];
@@ -280,9 +280,9 @@ class ApiClient
         });
      *
      * @param null $sinceCursor
-     * @param callable $callback
+     * @param callable|null $callback
      */
-    public function streamLedgers($sinceCursor = 'now', callable $callback = null)
+    public function streamLedgers($sinceCursor = 'now', ?callable $callback = null)
     {
         $url = sprintf('/ledgers');
         $params = [];
@@ -315,9 +315,9 @@ class ApiClient
         });
      *
      * @param null $sinceCursor
-     * @param callable $callback
+     * @param callable|null $callback
      */
-    public function streamOperations($sinceCursor = 'now', callable $callback = null)
+    public function streamOperations($sinceCursor = 'now', ?callable $callback = null)
     {
         $url = sprintf('/operations');
         $params = [];
@@ -350,9 +350,9 @@ class ApiClient
         });
      *
      * @param null $sinceCursor
-     * @param callable $callback
+     * @param callable|null $callback
      */
-    public function streamPayments($sinceCursor = 'now', callable $callback = null)
+    public function streamPayments($sinceCursor = 'now', ?callable $callback = null)
     {
         $url = sprintf('/payments');
         $params = [];
@@ -399,9 +399,9 @@ class ApiClient
         });
      *
      * @param null $sinceCursor
-     * @param callable $callback
+     * @param callable|null $callback
      */
-    public function streamTransactions($sinceCursor = 'now', callable $callback = null)
+    public function streamTransactions($sinceCursor = 'now', ?callable $callback = null)
     {
         $url = sprintf('/transactions');
         $params = [];

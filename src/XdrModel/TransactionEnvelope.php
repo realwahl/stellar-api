@@ -94,7 +94,7 @@ class TransactionEnvelope implements XdrEncodableInterface
      * @param Keypair[]|Keypair|string[] $keypairsOrsecretKeyStrings
      * @return $this
      */
-    public function sign($keypairsOrsecretKeyStrings, Server $server = null)
+    public function sign($keypairsOrsecretKeyStrings, ?Server $server = null)
     {
         if (!is_array($keypairsOrsecretKeyStrings)) $keypairsOrsecretKeyStrings = [$keypairsOrsecretKeyStrings];
 

@@ -36,7 +36,7 @@ class ChangeTrustOp extends Operation
      * @param int|BigInteger $limit int representing lumens or BigInteger representing stroops
      * @param AccountId|null $sourceAccount
      */
-    public function __construct(Asset $asset, $limit, AccountId $sourceAccount = null)
+    public function __construct(Asset $asset, $limit, ?AccountId $sourceAccount = null)
     {
         parent::__construct(Operation::TYPE_CHANGE_TRUST, $sourceAccount);
 

@@ -351,9 +351,9 @@ class Account extends RestApiModel
      * See ApiClient::streamPayments
      *
      * @param null $sinceCursor
-     * @param callable $callback
+     * @param callable|null $callback
      */
-    public function streamPayments($sinceCursor = 'now', callable $callback = null)
+    public function streamPayments($sinceCursor = 'now', ?callable $callback = null)
     {
         $this->apiClient->streamPayments($sinceCursor, $callback);
     }
