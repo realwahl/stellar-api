@@ -87,7 +87,7 @@ class HorizonException extends \ErrorException
      * @param ClientException $clientException
      * @return HorizonException
      */
-    public static function fromRawResponse($requestedUrl, $httpMethod, $raw, ClientException $clientException = null)
+    public static function fromRawResponse($requestedUrl, $httpMethod, $raw, ?ClientException $clientException = null)
     {
         $title = isset($raw['title']) ? $raw['title'] : 'Unknown Exception';
 
@@ -119,7 +119,7 @@ class HorizonException extends \ErrorException
      * @param string         $title
      * @param Throwable|null $previous
      */
-    public function __construct($title, Throwable $previous = null)
+    public function __construct($title, ?Throwable $previous = null)
     {
         $file = $previous ? $previous->getFile() : __FILE__;
         $line = $previous ? $previous->getLine() : __LINE__;

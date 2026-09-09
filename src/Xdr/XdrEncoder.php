@@ -230,7 +230,7 @@ class XdrEncoder
      * @param XdrEncodableInterface $value
      * @return string
      */
-    public static function optional(XdrEncodableInterface $value = null)
+    public static function optional(?XdrEncodableInterface $value = null)
     {
         $bytes = '';
 
